@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Preferencias Compartidas</string>
+    <string name="cero">0</string>
+    <string name="negro">Negro</string>
+    <string name="azul">Azúl</string>
+    <string name="rojo">Rojo</string>
+    <string name="verde">Verde</string>
+    <string name="contar">Contar</string>
+    <string name="reset">Reset</string>
+</resources>
