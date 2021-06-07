@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.RippleDrawable;
@@ -15,6 +16,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile =
+            "com.toni.preferenciascompartidas";
+
     private TextView txtContador;
 
     private int contador = 0;
@@ -30,22 +36,19 @@ public class MainActivity extends AppCompatActivity {
         txtContador = findViewById(R.id.txtContador);
 
         colorSeleccionado = ContextCompat.getColor(this, R.color.design_default_color_background);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        contador = mPreferences.getInt(CONTADOR_KEY, 0);
+        txtContador.setText(String.format("%s", contador));
 
-        if(savedInstanceState != null){
-            contador = savedInstanceState.getInt(CONTADOR_KEY);
-            if(contador != 0){
-                txtContador.setText(String.format("%s", contador));
-            }
-            colorSeleccionado = savedInstanceState.getInt(COLOR_KEY);
-            txtContador.setBackgroundColor(colorSeleccionado);
-        }
+        colorSeleccionado = mPreferences.getInt(COLOR_KEY, colorSeleccionado);
+        txtContador.setBackgroundColor(colorSeleccionado);
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     public void cambiarFondo(View view){
         int color = ((ColorDrawable) view.getBackground()).getColor();
-
+        txtContador.setBackgroundColor(color);
         colorSeleccionado = color;
     }
 
@@ -60,12 +63,21 @@ public class MainActivity extends AppCompatActivity {
 
         colorSeleccionado = ContextCompat.getColor(this, R.color.design_default_color_background);
         txtContador.setBackgroundColor(colorSeleccionado);
+
+        // Clear preferences
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.clear();
+        preferencesEditor.apply();
     }
 
+
     @Override
-    protected void onSaveInstanceState( Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt(CONTADOR_KEY, contador);
-        savedInstanceState.putInt(COLOR_KEY, colorSeleccionado);
+    protected void onPause(){
+        super.onPause();
+
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putInt(CONTADOR_KEY, contador);
+        preferencesEditor.putInt(COLOR_KEY, colorSeleccionado);
+        preferencesEditor.apply();
     }
 }
